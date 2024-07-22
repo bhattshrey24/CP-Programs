@@ -1,13 +1,53 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Dummy {
     public static void main(String args[]) {
         // System.out.println("Shre".substring(1, 4))
         //dummy1();
         System.out.println("Shrey".substring(2));
+    }
+
+    public int numDecodings(String s) {
+        HashMap<String, Integer> hm = new HashMap<>(); // Using hashmap to memoize
+        return numDecodingsMemoized(s, hm);
+    }
+
+    public int numDecodingsMemoized(String s, HashMap<String, Integer> hm) {
+        if (s.length() == 0) { // Base case 1 :  i.e. when string is empty then we can
+            // decode it by not decoding i.e. by not using any alphabet
+            return 1;
+        }
+        if (s.length() == 1) { // Base case 2 : When we only have 1 character
+            int val = Integer.parseInt(s);
+            if (val == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+
+        if (hm.containsKey(s)) return hm.get(s); // i.e. it means we have
+        // already calculated for it in previous branch so simply return the answer
+
+        int c1 = Integer.parseInt(s.substring(0, 1));
+        int rec1;
+        if (c1 == 0) { // if starts with 0 then answer for
+            // remaining is also 0 like for 0621 the answer is 0
+            return 0;
+        } else {
+            rec1 = numDecodingsMemoized(s.substring(1), hm); // let recursion find for remaining
+        }
+        int c2 = Integer.parseInt(s.substring(0, 2));
+        int rec2;
+        if (c2 > 26) { // checking if c2 is valid or not if not
+            rec2 = 0; // not returning 0 here because it is possible that rec1
+            // has an answer like see for 2811 here 28 is not valid but 2 is
+        } else {
+            rec2 = numDecodingsMemoized(s.substring(2), hm);
+        }
+        int ans = rec1 + rec2; // combining both
+        hm.put(s, ans);
+        return ans;
     }
 
     //    public boolean wordBreak(String s, List<String> wordDict) {
