@@ -6,59 +6,43 @@ public class Dummy {
 
     }
 
-    // There is a faster way. See solutions
-
-    // Using 1D dp
-    public boolean canJump(int[] nums) {
+    public int jump(int[] nums) {
         int n = nums.length;
-        boolean[] dp = new boolean[n]; // Observe here since we have to reach till last
-        // index and not beyond last index therefore dp size is not n+1
-        dp[n - 1] = true; // Jump at last index are of no use because
-        // we have to reach till last index only and not beyond
-        for (int i = n - 2; i >= 0; i--) { // Also here we move from last
-            // to 1st. If you have an algo which you think can work from left to
-            // right (like the recursive approach we used) then just Dry Run that for [2,2,1,0] and [1,1,0,2]
-            int maxJumps = nums[i];
-            System.out.println(maxJumps);
-            boolean flag = false;
-            for (int j = 1; j <= maxJumps; j++) {
-                if ((i + j) >= 0 && dp[i + j]) {
-                    flag = true;
-                    break;
+        int[] dp = new int[n];
+        dp[n - 1] = 0; // Base case i.e. if we are at
+        // destination then min jumps required is 0
+        for (int i = n - 2; i >= 0; i--) {
+            int min = Integer.MAX_VALUE;
+            int maxJump = nums[i];
+            for (int j = 1; j <= maxJump; j++) { // Here we check all the jumps because any jump
+                // can result in answer unlike in method 3 of jump game 1 question where
+                // we just had to find weather we can reach end or not. Here we have to find
+                // optimal result i.e. minimum jumps therefore DP is needed
+                if ((i + j) < n && dp[i + j] != Integer.MAX_VALUE) { // If an index has Infinity stored then it
+                    // means we cannot reach destination from that index
+                    min = Math.min(min, 1 + dp[i + j]);
                 }
             }
-            dp[i] = flag;
-        }
-        for (boolean ele : dp) {
-            System.out.println(ele);
+            dp[i] = min;
         }
         return dp[0];
     }
 
-//    public boolean canJumpRec(int curr, int[] nums) {
-//        if (curr >= nums.length) return false;
-//        if (curr == nums.length - 1) return true;
-//        boolean flag = false;
-//        for (int i = 1; i <= nums[curr]; i++) {
-//            if (canJumpRec(curr + i, nums)) {
-//                flag = true;
-//                break;
-//            }
-//        }
-//        return flag;
+//    public int jump(int[] nums) {
+//        return jumpRec(0, nums);
 //    }
 
-//    public boolean canJump(int[] nums) {
-//        return canJumpRec(0, nums);
-//    }
-//
-//    public int canJumpRec(int curr, int[] nums) {
-//        if (curr >= nums.length) return 0;
-//        if (curr == nums.length - 1) return 1;
-//        int min = Integer.MAX_VALUE;
-//        for (int i = 1; i <= nums[curr]; i++) {
-//           min = Math.min(min,canJumpRec(curr + i, nums));
-//        }
-//        return min;
-//    }
+    public int jumpRec(int curr, int[] nums) {
+        if (curr >= nums.length) return Integer.MAX_VALUE;
+        if (curr == nums.length - 1) return 0;
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i <= nums[curr]; i++) {
+            if(jumpRec(curr + i, nums)!=Integer.MAX_VALUE){
+                min = Math.min(min,1 + jumpRec(curr + i, nums));
+            }
+        }
+        return min;
+    }
+
+
 }
