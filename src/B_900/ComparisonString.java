@@ -17,8 +17,8 @@ public class ComparisonString {
     }
 
     public static void comparisonString(String str, int n) {
-        int maxGreaterCount = 0;
-        int maxSmallerCount = 0;
+        int maxGreaterCount = 0; // i.e. max count of consecutive '<'
+        int maxSmallerCount = 0; // i.e. max count of consecutive '>'
         int currGreaterCount = 0;
         int currSmallerCount = 0;
 
