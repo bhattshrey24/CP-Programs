@@ -5,77 +5,36 @@ public class Dummy {
 
     }
 
-    public List<List<Integer>> pacificAtlantic(int[][] heights) {
-        int r = heights.length;
-        int c = heights[0].length;
-
-        boolean[][] visForPacific = new boolean[r][c];
-        boolean[][] visForAtlantic = new boolean[r][c];
-
-        for (int j = 0; j < c; j++) {
-            if (!visForPacific[0][j]) {
-                dfs(0, j, Integer.MIN_VALUE, r, c, visForPacific, heights);
-            }
-        }
-        for (int i = 0; i < r; i++) {
-            if (!visForPacific[i][0]) {
-                dfs(i, 0, Integer.MIN_VALUE, r, c, visForPacific, heights);
-            }
-        }
-        for (int j = 0; j < c; j++) {
-            if (!visForAtlantic[r - 1][j]) {
-                dfs(r - 1, j, Integer.MIN_VALUE, r, c, visForAtlantic, heights);
-            }
-        }
-        for (int i = 0; i < r; i++) {
-            if (!visForAtlantic[i][c - 1]) {
-                dfs(i, c - 1, Integer.MIN_VALUE, r, c, visForAtlantic, heights);
-            }
-        }
-
-        for (int i = 0; i < r; i++) {
-            System.out.println();
-            for (int j = 0; j < c; j++) {
-                System.out.print(visForAtlantic[i][j]+" ");
-            }
-        }
-        System.out.println();
-        for (int i = 0; i < r; i++) {
-            System.out.println();
-            for (int j = 0; j < c; j++) {
-                System.out.print(visForPacific[i][j]+" ");
-            }
-        }
-
-        List<List<Integer>> ans = new ArrayList<>();
+    public int numIslands(char[][] grid) {
+        int r = grid.length;
+        int c = grid[0].length;
+        boolean[][] visited = new boolean[r][c];
+        int count = 0;
         for (int i = 0; i < r; i++) {
             for (int j = 0; j < c; j++) {
-                if (visForPacific[i][j] && visForAtlantic[i][j]) {
-                    ArrayList<Integer> curr = new ArrayList<>();
-                    curr.add(i);
-                    curr.add(j);
-                    ans.add(curr);
+                if (!visited[i][j] && grid[i][j] == '1') {
+                    dfs(i, j, r, c, grid, visited); // one DFS call simply makes
+                    // all the vertices in a connected component as true
+                    count++;// Simply counting number of connected components
                 }
             }
         }
-        return ans;
+        return count;
     }
 
-    public static void dfs(int i, int j, int prev, int r, int c, boolean[][] vis, int[][] heights) {
+    public static void dfs(int i, int j, int r, int c, char[][] grid, boolean[][] visited) {
         if (!isValid(i, j, r, c)) return;
-        if (vis[i][j]) return;
-        if (heights[i][j] < prev) return;
+        if (visited[i][j]) return;
+        if (grid[i][j] == '0') return; // i.e. if current grid has water then return
 
-        vis[i][j] = true;
-
-        dfs(i + 1, j, heights[i][j], r, c, vis, heights);
-        dfs(i - 1, j, heights[i][j], r, c, vis, heights);
-        dfs(i, j + 1, heights[i][j], r, c, vis, heights);
-        dfs(i, j - 1, heights[i][j], r, c, vis, heights);
+        visited[i][j] = true;
+        dfs(i + 1, j, r, c, grid, visited);
+        dfs(i - 1, j, r, c, grid, visited);
+        dfs(i, j + 1, r, c, grid, visited);
+        dfs(i, j - 1, r, c, grid, visited);
     }
+
     public static boolean isValid(int i, int j, int r, int c) {
-        return (i >= 0 && j >= 0) && (i < r && j < c);
+        return i >= 0 && j >= 0 && i < r && j < c;
     }
-
-
 }
