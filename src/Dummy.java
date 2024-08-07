@@ -2,6 +2,11 @@ import java.util.*;
 
 public class Dummy {
     public static void main(String args[]) {
+        String[] words = new String[3];
+        words[0]="afd";
+        words[1]="afce";
+        words[2]="ag";
+        System.out.println(alienOrder(words));
     }
 
 
@@ -49,7 +54,7 @@ public class Dummy {
         return count;
     }
 
-    public String alienOrder(String[] words) {
+    public static String alienOrder(String[] words) {
         Map<Character, Set<Character>> graph = constructGraph(words);
         if (graph == null) { //This handles [[APES] , [APE]] case
             return "";
@@ -58,7 +63,7 @@ public class Dummy {
     }
 
 
-    private Map<Character, Set<Character>> constructGraph(String[] words) {
+    private static Map<Character, Set<Character>> constructGraph(String[] words) {
         Map<Character, Set<Character>> graph = new HashMap<>();
 
         // create nodes
@@ -101,7 +106,7 @@ public class Dummy {
         return graph;
     }
 
-    private String topologicalSorting(Map<Character, Set<Character>> graph) {
+    private static String topologicalSorting(Map<Character, Set<Character>> graph) {
         // NOTE : Since we should return the topological sort with lexicographical order
         // we should use PriorityQueue instead of a normal Queue
         Map<Character, Integer> indegree = getIndegree(graph);
@@ -131,7 +136,7 @@ public class Dummy {
         return sb.toString();
     }
 
-    private Map<Character, Integer> getIndegree(Map<Character, Set<Character>> graph) {
+    private static Map<Character, Integer> getIndegree(Map<Character, Set<Character>> graph) {
         Map<Character, Integer> indegree = new HashMap<>(); // Simply creating indegree
         for (Character vertex : graph.keySet()) {
             indegree.put(vertex, 0); // adding 0 with every vertex of graph so that the vertices
@@ -144,8 +149,6 @@ public class Dummy {
         }
         return indegree;
     }
-
-
 
 
 }
