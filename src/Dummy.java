@@ -5,61 +5,64 @@ public class Dummy {
 
     }
 
-    public boolean validTree(int n, int[][] edges) {
-
-        if (n == 1) return true; // edge case handling
-
-        if (edges.length != (n - 1)) { // We know that a Spanning Tree with n vertices
-            // will have exactly n - 1 edges
-            return false;
-        }
-
-        int[] parent = new int[n];
-        int[] rank = new int[n];
-        Arrays.fill(rank, 1);
-        makeSet(parent);
-
-        boolean ans = true;
-
+    public int countGoodNodes(int[][] edges) {
+        HashMap<Integer, ArrayList<Integer>> tree = new HashMap<>();
+        int[] count = new int[1];
         for (int i = 0; i < edges.length; i++) {
             int u = edges[i][0];
             int v = edges[i][1];
-            if (findLeader(u, parent) == findLeader(v, parent)) { // this means
-                // cycle detected
-                return false;
+            ArrayList<Integer> children;
+            if (tree.containsKey(u)) {
+                children = tree.get(u);
             } else {
-                union(u, v, parent, rank);
+                children = new ArrayList<>();
+            }
+            children.add(v);
+            tree.put(u, children);
+
+            ArrayList<Integer> children2;
+            if (tree.containsKey(v)) {
+                children2 = tree.get(v);
+            } else {
+                children2 = new ArrayList<>();
+            }
+            children2.add(u);
+            tree.put(v, children2);
+        }
+        findSizeRec(0, -1, tree, count);
+        return count[0];
+    }
+
+    public static int findSizeRec(int currNode, int parent, HashMap<Integer, ArrayList<Integer>> tree, int[] count) {
+        ArrayList<Integer> child = tree.get(currNode);
+        if (child.size() == 1 && child.get(0) == parent) {
+            count[0]++;
+            return 1;
+        }
+
+        int totalSize = 0;
+        boolean isFoundMisMatch = false;
+        int prev = -1;
+
+        for (int children : tree.get(currNode)) {
+            if (children == parent) {
+                continue;
+            }
+            int size = findSizeRec(children, currNode, tree, count);
+            totalSize += size;
+
+            if (prev == -1) {
+                prev = size;
+            } else if (prev != size) {
+                isFoundMisMatch = true;
             }
         }
-        return ans;
-    }
 
-    public static void makeSet(int[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = i;
+        if (!isFoundMisMatch) {
+            count[0]++;
         }
+        return totalSize;
     }
 
-    public static int findLeader(int x, int[] parent) {
-        if (parent[x] == x) return x;
-        int leader = findLeader(parent[x], parent);
-        parent[x] = leader;
-        return leader;
-    }
 
-    public static void union(int u, int v, int[] parent, int[] rank) { // rank is nothing but height
-        int leaderU = findLeader(u, parent);
-        int leaderV = findLeader(v, parent);
-        if (leaderV != leaderU) {
-            if (rank[leaderU] > rank[leaderV]) {
-                parent[leaderV] = leaderU;
-            } else if (rank[leaderU] < rank[leaderV]) {
-                parent[leaderU] = leaderV;
-            } else { // when height is same
-                parent[leaderU] = leaderV;
-                rank[leaderV]++;
-            }
-        }
-    }
-    
 }
