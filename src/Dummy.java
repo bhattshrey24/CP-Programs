@@ -5,63 +5,37 @@ public class Dummy {
 
     }
 
-    public int countGoodNodes(int[][] edges) {
-        HashMap<Integer, ArrayList<Integer>> tree = new HashMap<>();
-        int[] count = new int[1];
-        for (int i = 0; i < edges.length; i++) {
-            int u = edges[i][0];
-            int v = edges[i][1];
-            ArrayList<Integer> children;
-            if (tree.containsKey(u)) {
-                children = tree.get(u);
-            } else {
-                children = new ArrayList<>();
-            }
-            children.add(v);
-            tree.put(u, children);
-
-            ArrayList<Integer> children2;
-            if (tree.containsKey(v)) {
-                children2 = tree.get(v);
-            } else {
-                children2 = new ArrayList<>();
-            }
-            children2.add(u);
-            tree.put(v, children2);
+    public int maxSubArray(int[] nums) {
+        int max = nums[0];
+        int prev = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            int curr = nums[i];
+            max = Math.max(max, Math.max(curr, prev + curr));
+            prev = Math.max(curr, prev + curr);
         }
-        findSizeRec(0, -1, tree, count);
-        return count[0];
+        return max;
     }
 
-    public static int findSizeRec(int currNode, int parent, HashMap<Integer, ArrayList<Integer>> tree, int[] count) {
-        ArrayList<Integer> child = tree.get(currNode);
-        if (child.size() == 1 && child.get(0) == parent) {
-            count[0]++;
-            return 1;
+    public int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int[] prefixProd = new int[n];
+
+        prefixProd[0] = nums[0];
+        for (int i = 1; i < n; i++) prefixProd[i] = nums[i] * prefixProd[i - 1];
+
+        int[] suffixProd = new int[n];
+
+        suffixProd[n - 1] = nums[n - 1];
+        for (int i = n - 2; i >= 0; i--) suffixProd[i] = nums[i] * suffixProd[i + 1];
+
+        int[] ans = new int[n];
+        ans[0] = suffixProd[1];
+        ans[n - 1] = prefixProd[n - 2];
+        for (int i = 1; i < n - 1; i++) {
+            ans[i] = prefixProd[i - 1] * suffixProd[i + 1];
         }
 
-        int totalSize = 0;
-        boolean isFoundMisMatch = false;
-        int prev = -1;
-
-        for (int children : tree.get(currNode)) {
-            if (children == parent) {
-                continue;
-            }
-            int size = findSizeRec(children, currNode, tree, count);
-            totalSize += size;
-
-            if (prev == -1) {
-                prev = size;
-            } else if (prev != size) {
-                isFoundMisMatch = true;
-            }
-        }
-
-        if (!isFoundMisMatch) {
-            count[0]++;
-        }
-        return totalSize;
+        return ans;
     }
 
 
